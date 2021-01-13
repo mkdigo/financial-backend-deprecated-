@@ -3,80 +3,35 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\Account;
+use App\Models\Group;
 use Illuminate\Http\Request;
-use App\Http\Resources\AccountResource;
 use Illuminate\Support\Facades\Validator;
 
-class AccountController extends Controller
+class GroupController extends Controller
 {
   public function index()
   {
-    $accounts = auth('api')->user()->accounts()->get();
-    $groups = auth('api')->user()->groups()->get();
-    $subgroups = auth('api')->user()->subgroups()->get();
-
     return [
       'success' => true,
-      'data' => [
-        'accounts' => AccountResource::collection($accounts),
-        'groups' => $groups,
-        'subgroups' => $subgroups
-      ]
+      'data' => auth('api')->user()->groups()->get()
     ];
   }
 
-  public function store(Request $request)
-  {
-    $data = $request->only(['name', 'group_id', 'subgroup_id']);
-
+  public function store(Request $request) {
+    $data = $request->only(['name']);
     $validator = Validator::make($data, [
       'name' => 'required|string|max:191',
-      'group_id' => 'required|integer',
-      'subgroup_id' => 'required|integer',
     ]);
 
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'erros' => $validator->errors()
       ]);
     }
 
     try {
-      $account = auth('api')->user()->accounts()->create($data);
-
-      return response()->json([
-        'success' => true,
-        'data' => new AccountResource($account)
-      ]);
-    } catch(Exception $e) {
-      return response()->json([
-        'success' => false,
-        'message' => $e->getMessage()
-      ]);
-    }
-  }
-
-  public function update(Request $request, Account $account)
-  {
-    $data = $request->only(['name', 'group_id', 'subgroup_id']);
-
-    $validator = Validator::make($data, [
-      'name' => 'required|string|max:191',
-      'group_id' => 'required|integer',
-      'subgroup_id' => 'required|integer',
-    ]);
-
-    if($validator->fails()) {
-      return response()->json([
-        'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
-      ]);
-    }
-
-    try {
-      auth('api')->user()->accounts()->update($data);
+      auth('api')->user()->groups()->create($data);
 
       return response()->json([
         'success' => true
@@ -89,10 +44,38 @@ class AccountController extends Controller
     }
   }
 
-  public function destroy(Account $account)
+  public function update(Request $request, Group $group)
+  {
+    $data = $request->only(['name']);
+    $validator = Validator::make($data, [
+      'name' => 'required|string|max:191',
+    ]);
+
+    if($validator->fails()) {
+      return response()->json([
+        'success' => false,
+        'erros' => $validator->errors()
+      ]);
+    }
+
+    try {
+      auth('api')->user()->groups()->update($data);
+
+      return response()->json([
+        'success' => true
+      ]);
+    } catch(Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => $e->getMessage()
+      ]);
+    }
+  }
+
+  public function destroy(Group $group)
   {
     try {
-      $account->delete();
+      $group->delete();
 
       return response()->json([
         'success' => true

@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Group;
-use App\Models\Subgroup;
+use App\Models\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Account extends Model
+class Subgroup extends Model
 {
   use HasFactory;
 
@@ -22,13 +22,13 @@ class Account extends Model
     return $this->belongsTo(User::class);
   }
 
-  public function groups()
+  public function group()
   {
-    return $this->hasMany(Group::class);
+    return $this->belongsTo(Group::class);
   }
 
-  public function subgroups()
+  public function account()
   {
-    return $this->hasMany(Subgroup::class);
+    return $this->belongsTo(Account::class);
   }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Group;
+use App\Models\Account;
+use App\Models\Subgroup;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -62,5 +65,23 @@ class User extends Authenticatable implements JWTSubject
   public function getJWTCustomClaims()
   {
     return [];
+  }
+
+
+  // Relationships
+
+  public function groups()
+  {
+    return $this->hasMany(Group::class);
+  }
+
+  public function subgroups()
+  {
+    return $this->hasMany(Subgroup::class);
+  }
+
+  public function accounts()
+  {
+    return $this-> hasMany(Account::class);
   }
 }
