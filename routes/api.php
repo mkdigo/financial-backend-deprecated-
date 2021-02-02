@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\SubgroupController;
 
 /*
@@ -42,12 +43,15 @@ Route::group(['middleware' => ['jwt']], function() {
   // Accounts
   Route::get('/accounts', [AccountController::class, 'index']);
   Route::post('/accounts', [AccountController::class, 'store']);
-  Route::put('/accounts/{account}', [AccountController::class, 'update']);
-  Route::delete('/accounts/{account}', [AccountController::class, 'destroy']);
+  Route::put('/accounts/{id}', [AccountController::class, 'update']);
+  Route::delete('/accounts/{id}', [AccountController::class, 'destroy']);
 
   // Entries
   Route::get('/entries', [EntryController::class, 'index']);
   Route::post('/entries', [EntryController::class, 'store']);
-  Route::put('/entries/{entry}', [EntryController::class, 'update']);
-  Route::delete('/entries/{entry}', [EntryController::class, 'destroy']);
+  Route::put('/entries/{id}', [EntryController::class, 'update']);
+  Route::delete('/entries/{id}', [EntryController::class, 'destroy']);
+
+  // Balance
+  Route::get('/balance', [BalanceController::class, 'index']);
 });

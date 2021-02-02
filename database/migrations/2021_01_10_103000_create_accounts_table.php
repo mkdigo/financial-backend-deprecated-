@@ -23,7 +23,7 @@ class CreateAccountsTable extends Migration
 
       $table->foreign('group_id')->references('id')->on('groups');
       $table->foreign('subgroup_id')->references('id')->on('subgroups');
-      $table->foreign('user_id')->references('id')->on('users');
+      $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
     });
   }
 

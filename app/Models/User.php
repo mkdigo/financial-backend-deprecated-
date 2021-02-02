@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Entry;
 use App\Models\Group;
 use App\Models\Account;
 use App\Models\Subgroup;
@@ -83,5 +84,10 @@ class User extends Authenticatable implements JWTSubject
   public function accounts()
   {
     return $this-> hasMany(Account::class);
+  }
+
+  public function entries()
+  {
+    return $this->hasMany(Entry::class);
   }
 }

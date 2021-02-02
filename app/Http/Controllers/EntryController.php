@@ -39,7 +39,7 @@ class EntryController extends Controller
     }
 
     try {
-      $entry = Entry::create($data);
+      $entry = auth('api')->user()->entries()->create($data);
 
       return response()->json([
         'success' => true,
@@ -48,12 +48,12 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }
 
-  public function update (Request $request, Entry $entry)
+  public function update (Request $request, $id)
   {
     $data = $request->only(['date', 'debit_id', 'credit_id', 'value', 'note']);
 
@@ -73,6 +73,7 @@ class EntryController extends Controller
     }
 
     try {
+      $entry = auth('api')->user()->entries()->findOrFail($id);
       $entry->update($data);
 
       return response()->json([
@@ -82,14 +83,15 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }
 
-  public function destroy (Entry $entry)
+  public function destroy ($id)
   {
     try {
+      $entry = auth('api')->user()->entries()->findOrFail($id);
       $entry->delete();
 
       return response()->json([
@@ -98,7 +100,7 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }

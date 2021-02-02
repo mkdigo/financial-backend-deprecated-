@@ -12,9 +12,9 @@ class AccountController extends Controller
 {
   public function index()
   {
-    $accounts = auth('api')->user()->accounts()->get();
-    $groups = auth('api')->user()->groups()->get();
-    $subgroups = auth('api')->user()->subgroups()->get();
+    $accounts = auth('api')->user()->accounts()->orderBy('name')->get();
+    $groups = auth('api')->user()->groups()->orderBy('name')->get();
+    $subgroups = auth('api')->user()->subgroups()->orderBy('name')->get();
 
     return [
       'success' => true,
@@ -53,12 +53,12 @@ class AccountController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }
 
-  public function update(Request $request, Account $account)
+  public function update(Request $request, $id)
   {
     $data = $request->only(['name', 'group_id', 'subgroup_id']);
 
@@ -76,22 +76,25 @@ class AccountController extends Controller
     }
 
     try {
-      auth('api')->user()->accounts()->update($data);
+      $account = auth('api')->user()->accounts()->findOrFail($id);
+      $account->update($data);
 
       return response()->json([
-        'success' => true
+        'success' => true,
+        'data' => new AccountResource($account)
       ]);
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }
 
-  public function destroy(Account $account)
+  public function destroy($id)
   {
     try {
+      $account = auth('api')->user()->accounts()->findOrFail($id);
       $account->delete();
 
       return response()->json([
@@ -100,7 +103,7 @@ class AccountController extends Controller
     } catch (Exception $e) {
       return response()->json([
         'success' => false,
-        'message' => $e->getMessage()
+        'errors' => $e->getMessage()
       ]);
     }
   }

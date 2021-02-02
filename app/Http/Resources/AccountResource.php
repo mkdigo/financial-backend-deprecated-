@@ -19,7 +19,9 @@ class AccountResource extends JsonResource
     return [
       'id' => $this->id,
       'name' => $this->name,
+      'group_id' => $this->group_id,
       'group' => Group::findOrFail($this->group_id)->name,
+      'subgroup_id' => $this->subgroup_id,
       'subgroup' => Subgroup::findOrFail($this->subgroup_id)->name,
     ];
   }
