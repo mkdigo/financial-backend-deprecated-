@@ -49,6 +49,8 @@ class BalanceController extends Controller
       // Income Statement
       $incomeStatementAccounts = auth('api')->user()->accounts()->where('group_id', 4)->orderBy('name')->get();
 
+      $incomeStatement['revenues'] = [];
+      $incomeStatement['expenses'] = [];
       $incomeStatement['amounts']['revenues'] = 0;
       $incomeStatement['amounts']['expenses'] = 0;
 
@@ -58,12 +60,16 @@ class BalanceController extends Controller
 
         if($account->subgroup_id === 7) {
           $amount = $credits->sum('value') - $debits->sum('value');
-          $incomeStatement['revenues'][$account->name] = $amount;
-          $incomeStatement['amounts']['revenues'] +=  $amount;
+          if($amount !== 0) {
+            $incomeStatement['revenues'][$account->name] = $amount;
+            $incomeStatement['amounts']['revenues'] +=  $amount;
+          }
         } else {
           $amount = $debits->sum('value') - $credits->sum('value');
-          $incomeStatement['expenses'][$account->name] = $amount;
-          $incomeStatement['amounts']['expenses'] +=  $amount;
+          if($amount !== 0) {
+            $incomeStatement['expenses'][$account->name] = $amount;
+            $incomeStatement['amounts']['expenses'] +=  $amount;
+          }
         }
       }
       $incomeStatement['amounts']['incomeBeforeTaxes'] = $incomeStatement['amounts']['revenues'] - $incomeStatement['amounts']['expenses'];
@@ -73,6 +79,13 @@ class BalanceController extends Controller
 
       // Assets
       $assetsAccounts = auth('api')->user()->accounts()->where('group_id', 1)->orderBy('name')->get();
+
+      $balance['assets']['current'] = [];
+      $balance['assets']['longTerm'] = [];
+      $balance['assets']['property'] = [];
+      $balance['liabilities']['current'] = [];
+      $balance['liabilities']['longTerm'] = [];
+      $balance['equity'] = [];
 
       $currentAssets = 0;
       $longTermAssets = 0;
