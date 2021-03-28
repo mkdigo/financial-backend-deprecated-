@@ -10,9 +10,45 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-  public function index()
+    /*
+    Groups
+      1 - Assets
+      2 - Liabilities
+      3 - Owner's Equity
+      4 - Income Statement
+
+    Subgroups
+      1 - Current Assets
+      2 - Property
+      3 - Long Term Assets
+      4 - Current Liabilities
+      5 - Long Term Liabilities
+      6 - Owner's Equity
+      7 - Revenues
+      8 - Expenses
+  */
+
+  public function index(Request $request)
   {
-    $accounts = auth('api')->user()->accounts()->orderBy('name')->get();
+    $validateData = $request->only('group_id', 'subgroup_id');
+
+    $validator = Validator::make($validateData, [
+      'group_id' => 'integer|nullable',
+      'subgroup_id' => 'integer|nullable',
+    ]);
+
+    if($validator->fails()) {
+      return response()->json([
+        'success' => false,
+        'errors' => implode(' ', $validator->messages()->all())
+      ]);
+    }
+
+    $accounts = auth('api')->user()->accounts();
+    if($request->group_id) $accounts = $accounts->where('group_id', $request->group_id);
+    if($request->subgroup_id) $accounts = $accounts->where('subgroup_id', $request->subgroup_id);
+    $accounts = $accounts->orderBy('name')->get();
+
     $groups = auth('api')->user()->groups()->orderBy('name')->get();
     $subgroups = auth('api')->user()->subgroups()->orderBy('name')->get();
 
