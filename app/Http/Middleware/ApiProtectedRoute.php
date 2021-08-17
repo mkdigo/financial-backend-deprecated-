@@ -25,7 +25,7 @@ class ApiProtectedRoute
       } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
         try {
           $newToken = JWTAuth::parseToken()->refresh();
-          return response()->json(['success' => false, 'access_token' => $newToken, 'message' => 'Token Expired'], 200);
+          return response()->json(['success' => false, 'access_token' => $newToken, 'message' => 'Token Expired'], 401);
         } catch(\Exception $e) {
           return response()->json(['success' => false, 'message' => 'The token has been blacklisted'], 401);
         }

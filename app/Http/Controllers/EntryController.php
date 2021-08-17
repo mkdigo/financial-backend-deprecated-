@@ -6,13 +6,28 @@ use Exception;
 use App\Models\Entry;
 use Illuminate\Http\Request;
 use App\Http\Resources\EntryResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class EntryController extends Controller
 {
-  public function index ()
+  public function index (Request $request)
   {
-    $entries = Entry::orderBy('date', 'desc')->get();
+    $entries = Entry::
+      where('note', 'like', "%$request->search%")
+      ->orWhere(function($query) use($request) {
+        $query->where('value', $request->search)
+        ->orWhere(function($query) use($request) {
+          $query->whereHas('debit', function(Builder $query) use($request) {
+            $query->where('name', 'like', "%$request->search%");
+          })
+          ->orWhereHas('credit', function(Builder $query) use($request) {
+            $query->where('name', 'like', "%$request->search%");
+          });
+        });
+      })
+      ->orderBy('date', 'desc')->get();
+
     return response()->json([
       'success' => true,
       'data' => EntryResource::collection($entries)
@@ -34,7 +49,7 @@ class EntryController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -48,7 +63,7 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }
@@ -68,7 +83,7 @@ class EntryController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -83,7 +98,7 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }
@@ -100,7 +115,7 @@ class EntryController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }

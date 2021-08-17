@@ -26,7 +26,7 @@ class GroupController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'erros' => $validator->errors()
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -54,7 +54,7 @@ class GroupController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'erros' => $validator->errors()
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 

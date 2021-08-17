@@ -24,6 +24,7 @@ class AuthController extends Controller
   public function login()
   {
     $credentials = request(['username', 'password']);
+    $credentials['active'] = true;
 
     if (! $token = auth('api')->attempt($credentials)) {
       return response()->json([
@@ -44,7 +45,7 @@ class AuthController extends Controller
   {
     return response()->json([
       'success' => true,
-      'data' => auth('api')->user()
+      'user' => auth('api')->user()
     ]);
   }
 
@@ -86,7 +87,8 @@ class AuthController extends Controller
       'success' => true,
       'access_token' => $token,
       'token_type' => 'bearer',
-      'expires_in' => auth('api')->factory()->getTTL() * 60
+      'expires_in' => auth('api')->factory()->getTTL() * 60,
+      'user' => auth('api')->user()
       ]);
     }
   }

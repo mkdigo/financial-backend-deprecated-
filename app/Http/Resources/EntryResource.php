@@ -15,15 +15,13 @@ class EntryResource extends JsonResource
   */
   public function toArray($request)
   {
-    $debitName = Account::findOrFail($this->debit_id);
-    $creditName = Account::findOrFail($this->credit_id);
     return [
       "id" => $this->id,
       "date" => $this->date,
       "debit_id" => $this->debit_id,
-      "debit_name" => $debitName->name,
+      "debit_name" => $this->debit->name,
       "credit_id" => $this->credit_id,
-      "credit_name" => $creditName->name,
+      "credit_name" => $this->credit->name,
       "value" => $this->value,
       "note" => $this->note,
     ];

@@ -12,18 +12,25 @@ class BalanceController extends Controller
 {
   public function index(Request $request)
   {
-    $validateData = $request->only('yearMonth');
+    // $validateData = $request->only('yearMonth');
+    // $validator = Validator::make($validateData, [
+    //   "yearMonth" => "required|string|regex:/\d{4}-\d{2}/"
+    // ]);
+
+    $validateData = $request->only('year', 'month');
+
     $validator = Validator::make($validateData, [
-      "yearMonth" => "required|string|regex:/\d{4}-\d{2}/"
+      "year" => "required|string|digits:4",
+      "month" => "required|string|digits:2"
     ]);
 
     if($validator->fails()) return response()->json([
       "success" => false,
-      "errors" => implode(' ', $validator->messages()->all())
+      "message" => implode(' ', $validator->messages()->all())
     ]);
 
-    $yearMonth = explode('-', $request->yearMonth);
-    $date = date("Y-m-t", strtotime($yearMonth[0] . "-" . $yearMonth[1] . "-01"));
+    // $yearMonth = explode('-', $request->yearMonth);
+    $date = date("Y-m-t", strtotime($request->year . "-" . $request->month . "-01"));
 
     /*
       Groups
@@ -162,13 +169,15 @@ class BalanceController extends Controller
 
       return response()->json([
         "success" => true,
-        "balance" => $balance,
-        "incomeStatement" => $incomeStatement
+        "data" => [
+          "balance" => $balance,
+          "incomeStatement" => $incomeStatement,
+        ],
       ]);
     } catch (Exception $e) {
       return response()->json([
         "success" => false,
-        "errors" => $e->getMessage()
+        "message" => $e->getMessage()
       ]);
     }
   }

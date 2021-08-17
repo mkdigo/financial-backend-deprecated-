@@ -40,7 +40,7 @@ class AccountController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -75,7 +75,7 @@ class AccountController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -89,7 +89,7 @@ class AccountController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }
@@ -107,7 +107,7 @@ class AccountController extends Controller
     if($validator->fails()) {
       return response()->json([
         'success' => false,
-        'errors' => implode(' ', $validator->messages()->all())
+        'message' => implode(' ', $validator->messages()->all())
       ]);
     }
 
@@ -122,7 +122,7 @@ class AccountController extends Controller
     } catch(Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }
@@ -139,7 +139,7 @@ class AccountController extends Controller
     } catch (Exception $e) {
       return response()->json([
         'success' => false,
-        'errors' => $e->getMessage()
+        'message' => $e->getMessage()
       ]);
     }
   }
